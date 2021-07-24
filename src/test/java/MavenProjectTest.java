@@ -9,6 +9,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -24,10 +25,11 @@ public class MavenProjectTest {
     @BeforeEach
     public void setUp() {
         logger.info("env = " + env);
-        driver = WebDriverFactory.getDriver(env.toLowerCase());
-        logger.info("Драйвер стартовал!");
-        driver = WebDriverFactory.getOption(load.toLowerCase());
         logger.info("Page Load strategy is: " + load);
+        driver = WebDriverFactory.getDriver(env.toLowerCase(), load.toLowerCase());
+        logger.info("Драйвер стартовал!");
+        //driver = WebDriverFactory.getOption(load.toLowerCase());
+
     }
 
     @Test
@@ -36,8 +38,6 @@ public class MavenProjectTest {
         driver.get("https://www.dns-shop.ru/");
         logger.info("Открыта страница DNS - " + "https://www.dns-shop.ru/");
 
-        //Открываем окно в полноэкранном режиме
-        driver.manage().window().fullscreen();
         //Отображение размеров окна браузера
         logger.info(String.format("Browser Window Height: %d", driver.manage().window().getSize().getHeight()));
         logger.info(String.format("Browser Window Width: %d", driver.manage().window().getSize().getWidth()));
@@ -69,7 +69,7 @@ public class MavenProjectTest {
         String query2 = "//*[@class=\"subcategory__item ui-link ui-link_blue\"]";
         List<WebElement> childElements  = parentElement.findElements(By.xpath(query2));
         for (WebElement childElement : childElements) {
-            logger.info("Категория: " + childElement.getTagName() + " = " + childElement.getText());
+            logger.info("Категория: " + childElement.getText());
         }
 
         // Создание куки Cookie 1 и вывод информации по нему
@@ -95,12 +95,12 @@ public class MavenProjectTest {
             logger.info("--------------------------------------");
         }
 
-        // Добавляем задержку sleep чтобы увидеть результат
-        /*try {
+        //Добавляем задержку sleep чтобы увидеть результат
+        try {
             Thread.sleep(10000);
         } catch (InterruptedException e) {
              e.printStackTrace();
-        }*/
+        }
     }
 
     @AfterEach

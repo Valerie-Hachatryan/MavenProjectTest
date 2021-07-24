@@ -14,15 +14,14 @@ import org.openqa.selenium.remote.CapabilityType;
 
 public class WebDriverFactory {
     private static Logger logger = LogManager.getLogger(WebDriverFactory.class);
-    private static String browser;
 
 
-    public static WebDriver getDriver(String browserName) {
+
+    public static WebDriver getDriver(String browserName, String optionName) {
         switch (browserName) {
             case "chrome":
                 WebDriverManager.chromedriver().setup();
                 //Специфические настройки браузера
-                browser = "Chrome";
                 ChromeOptions options = new ChromeOptions();
                 options.setCapability(CapabilityType.PLATFORM_NAME, Platform.ANY);
                 options.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.DISMISS);
@@ -32,10 +31,19 @@ public class WebDriverFactory {
                 options.addArguments("--incognito");
 
                 logger.info("Драйвер для браузера Google Chrome");
+                if (optionName.equals("none")) {
+                    options.setPageLoadStrategy(PageLoadStrategy.NONE);
+                    logger.info("FactoryPage Load Strategy is none");
+                } else if (optionName.equals("eager")){
+                    options.setPageLoadStrategy(PageLoadStrategy.EAGER);
+                    logger.info("Page Load Strategy is eager");
+                } else {
+                    options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
+                    logger.info("Page Load Strategy is normal");
+                }
                 return new ChromeDriver(options);
             case "firefox":
                 WebDriverManager.firefoxdriver().setup();
-                browser = "Firefox";
                 FirefoxOptions optionsf = new FirefoxOptions();
                 optionsf.setCapability(CapabilityType.PLATFORM_NAME, Platform.ANY);
                 optionsf.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.DISMISS);
@@ -45,49 +53,20 @@ public class WebDriverFactory {
                 optionsf.addArguments("--private");
 
                 logger.info("Драйвер для браузера Mozilla Firefox");
+                if (optionName.equals("none")) {
+                    optionsf.setPageLoadStrategy(PageLoadStrategy.NONE);
+                    logger.info("Page Load Strategy is none");
+                } else if (optionName.equals("eager")){
+                    optionsf.setPageLoadStrategy(PageLoadStrategy.EAGER);
+                    logger.info("Page Load Strategy is eager");
+                } else {
+                    optionsf.setPageLoadStrategy(PageLoadStrategy.NORMAL);
+                    logger.info("Page Load Strategy is normal");
+                }
                 return new FirefoxDriver(optionsf);
             default:
                 throw new RuntimeException("Incorrect browser name");
-        }
-    }
-    
-    public static WebDriver getOption(String optionType) {
-        if (browser.equals("Firefox")) {
-            switch (optionType) {
-                case "eager":
-                    FirefoxOptions options = new FirefoxOptions();
-                    options.setPageLoadStrategy(PageLoadStrategy.EAGER);
-                    logger.info("Page Load Strategy is eager");
-                    return new FirefoxDriver(options);
-                case "none":
-                    options = new FirefoxOptions();
-                    options.setPageLoadStrategy(PageLoadStrategy.NONE);
-                    logger.info("Page Load Strategy is none");
-                    return new FirefoxDriver(options);
-                default:
-                    options = new FirefoxOptions();
-                    options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
-                    logger.info("Page Load Strategy is normal");
-                    return new FirefoxDriver(options);
-            }  } else {
-            switch (optionType) {
-                case "eager":
-                    ChromeOptions options = new ChromeOptions();
-                    options.setPageLoadStrategy(PageLoadStrategy.EAGER);
-                    logger.info("Page Load Strategy is eager");
-                    return new ChromeDriver(options);
-                case "none":
-                    options = new ChromeOptions();
-                    options.setPageLoadStrategy(PageLoadStrategy.NONE);
-                    logger.info("Page Load Strategy is none");
-                    return new ChromeDriver(options);
-                default:
-                    options = new ChromeOptions();
-                    options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
-                    logger.info("Page Load Strategy is normal");
-                    return new ChromeDriver(options);
-            }
-        }
+                }
+
     }
 }
-
